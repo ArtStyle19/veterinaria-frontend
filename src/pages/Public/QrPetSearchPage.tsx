@@ -57,7 +57,6 @@
 // //   );
 // // }
 
-
 // // src/pages/Visitor/QrPetSearchPage.tsx
 // import { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
@@ -68,14 +67,12 @@
 //   const [showScanner, setShowScanner] = useState(false);
 //   const navigate = useNavigate();
 
-
 //   const extractTokenFromQR = (input: string): string | null => {
 //     const uuidRegex =
 //       /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
 //     const match = input.match(uuidRegex);
 //     return match ? match[1] : null;
 //   };
-  
 
 //   const goToPet = (raw: string) => {
 //     const token = extractTokenFromQR(raw);
@@ -87,7 +84,6 @@
 //     navigate(`/qr/${token}`);
 //     // vet should replace the modal with the pet information but with import the pet camcel button;
 //     // vet should replace the modal with the pet information but with import the pet camcel button;
-
 
 //   };
 
@@ -128,7 +124,6 @@
 //     </div>
 //   );
 // }
-
 
 // import { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
@@ -189,12 +184,11 @@
 //   );
 // }
 
-
-// src/pages/Visitor/QrPetSearchPage.tsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import QRScanner from '../../components/QRScanner';
+// import QRScanner from '../../components/QRScanner';
 import { useQrModal } from '../../qr-modal/QrModalContext';
+import PageWrapper from '../../components/PageWrapper';
 
 export default function QrPetSearchPage() {
   const [manual, setManual] = useState('');
@@ -202,24 +196,24 @@ export default function QrPetSearchPage() {
   const navigate = useNavigate();
   const { open } = useQrModal();
 
-
   return (
-        <div className="flex flex-col items-center justify-center gap-6 h-full">
+    <PageWrapper>
+      <div className="flex flex-col items-center justify-center gap-6 h-full">
+        {/* <div className="flex flex-col items-center justify-center h-screen gap-6"> */}
+        <h1 className="text-3xl font-bold">Scanea el QR de tu Mascota</h1>
+        <p className="text-slate-600 text-center max-w-md">
+          Bienvenido. Aquí puedes buscar la información pública de una mascota
+          mediante su código QR o token.
+        </p>
 
-    {/* <div className="flex flex-col items-center justify-center h-screen gap-6"> */}
-      <h1 className="text-3xl font-bold">Scanea el QR de tu Mascota</h1>
-      <p className="text-slate-600 text-center max-w-md">
-        Bienvenido. Aquí puedes buscar la información pública de una mascota
-        mediante su código QR o token.
-      </p>
+        <button className="btn btn-primary" onClick={() => open('VIEW')}>
+          Scannear QR
+        </button>
 
-               <button className="btn btn-primary" onClick={() => open('VIEW')}>
-  Scannear QR
-</button>
-      
-      {/* <Link to="/login" className="text-slate-600 hover:underline">
+        {/* <Link to="/login" className="text-slate-600 hover:underline">
         Soy usuario registrado →
       </Link> */}
-    </div>
+      </div>
+    </PageWrapper>
   );
 }

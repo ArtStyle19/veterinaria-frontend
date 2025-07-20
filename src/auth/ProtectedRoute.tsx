@@ -12,15 +12,15 @@ export default function ProtectedRoute({ roles, children }: Props) {
   const location = useLocation();
 
   /* 1. Mientras no sabemos -> spinner */
-  if (loading) return <div className="p-8 text-center">Verificando sesión…</div>;
+  if (loading)
+    return <div className="p-8 text-center">Verificando sesión…</div>;
 
   /* 2. No logueado */
   if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
 
-  /* 3. Rol no autorizado */
+  /* 3. Rol no autorizado || Create Page of non Authorized */
   if (roles && !roles.includes(user.roleName))
     return <Navigate to="/" replace />;
 
-  /* 4. Todo bien */
   return children;
 }

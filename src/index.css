@@ -1,5 +1,5 @@
 /* src/index.css */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Your custom CSS for the <button> tag (if you want to override Tailwind's base styles) */
 /* button {
@@ -25,7 +25,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 } */
 @utility input {
-    /* @apply gap-2 focus:outline-none bg-white/3 border-white/10 border-1 hover:bg-blue-600/0 hover:border-white/60 hover:border-1 transition px-3 py-1 text-xs rounded px-4 shadow-md */
+  /* @apply gap-2 focus:outline-none bg-white/3 border-white/10 border-1 hover:bg-blue-600/0 hover:border-white/60 hover:border-1 transition px-3 py-1 text-xs rounded px-4 shadow-md */
 
   @apply border border-slate-300/10 rounded px-3 py-1 focus:outline-none focus:ring-1 focus:ring-white/10 text-xs;
 }
@@ -33,35 +33,38 @@ button:focus-visible {
 /* .input {
 } */
 
-@utility select {
-  /* @apply inline-flex items-center gap-2 bg-white/3 border-white/10 border-1 hover:bg-blue-600/0 hover:border-white/60 hover:border-1 transition px-3 py-1 text-xs rounded px-4 shadow-md */
+/* @utility select {
+  @apply inline-flex items-center gap-2 bg-white/3 border-white/10 border-1 hover:bg-blue-600/0  hover:border-white/60 hover:border-1 transition px-3 py-1 text-xs rounded px-4 shadow-md;
+} */
 
-  @apply border inline-flex items-center border-slate-300/10 rounded px-3 py-1 focus:outline-none focus:ring-1 focus:ring-white/50 text-xs;
+select {
+  background: rgba(255, 255, 255, 0.123);
+  border-color: rgba(255, 255, 255, 0.2);
+  @apply inline-flex items-center gap-4 border  rounded;
 }
 
 @utility btn {
   /* @apply inline-flex items-center gap-2 rounded px-4 py-1.5 font-medium text-white bg-blue-900 hover:bg-sky-700 disabled:opacity-60; */
   /* @apply inline-flex items-center gap-1 rounded px-4 py-1.5 font-medium text-white bg-blue-900 hover:bg-sky-700 disabled:opacity-60; */
-  @apply inline-flex items-center gap-2 bg-white/5 border-white/10 border-1 hover:bg-blue-600/0 hover:border-white/60 hover:border-1 transition-colors px-3 py-1 text-xs rounded px-4 shadow-md
-
+  @apply inline-flex items-center gap-2 bg-white/5 border-white/10 border-1 hover:bg-blue-600/0 hover:border-white/60 hover:border-1 transition-colors px-3 py-1 text-xs rounded px-4 shadow-md;
 }
-
 
 .btn-primary {
   @apply btn;
 }
 
-
 @utility video {
-  @apply w-full rounded; 
+  @apply w-full rounded;
 }
-
 
 @keyframes scan {
-  0% { top: 0; }
-  100% { top: 100%; }
+  0% {
+    top: 0;
+  }
+  100% {
+    top: 100%;
+  }
 }
-
 
 .qr-shaded-region {
   /* position: relative; */
@@ -94,30 +97,41 @@ button:focus-visible {
   @apply hover:text-white/70 transition-colors;
 }
 
-
-.btn {
-  /* @apply px-4 py-1.5 rounded font-medium text-sm transition-colors; */
-}
+/* .btn { */
+/* @apply px-4 py-1.5 rounded font-medium text-sm transition-colors; */
+/* } */
 .btn-primary {
   @apply bg-emerald-300/0  hover:bg-white/0 hover:border-emerald-300  hover:text-emerald-300 border-emerald-300/70 text-emerald-300/70 text-xs transition-discrete;
 }
 
 /* a {
   /* @apply bg-slate-600/50 hover:bg-slate-600 text-white text-xs; */
-  @apply bg-emerald-300/0  hover:bg-white/0 hover:border-emerald-300  hover:text-emerald-300 border-emerald-300/70 text-emerald-300/70 text-xs transition-discrete;
+/* @apply bg-emerald-300/0  hover:bg-white/0 hover:border-emerald-300  hover:text-emerald-300 border-emerald-300/70 text-emerald-300/70 text-xs transition-discrete; */
 /* } */
-*/
-
-.btn-secondary {
-  /* @apply bg-slate-600/50 hover:bg-slate-600 text-white text-xs; */
-}
-.input {
-  /* @apply bg-white/20 backdrop-blur border border-white/100 px-3 py-1 rounded w-full text-slate-100; */
-}
+/*  .btn-secondary { */
+/* @apply bg-slate-600/50 hover:bg-slate-600 text-white text-xs; */
+/* } */
+/* .input { */
+/* @apply bg-white/20 backdrop-blur border border-white/100 px-3 py-1 rounded w-full text-slate-100; */
+/* } */
 .shadow-glass {
-  box-shadow: 0 4px 30px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
 
 /* #qr-reader__dashboard_section_csr button {
   @apply btn-primary;

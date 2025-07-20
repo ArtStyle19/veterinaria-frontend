@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getAppointmentDetail } from '../../api/medical';
 import type { AppointmentDetailDto } from '../../types/medical';
 import dayjs from 'dayjs';
+import PageWrapper from '../../components/PageWrapper';
 
 export default function AppointmentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -22,31 +23,33 @@ export default function AppointmentDetailPage() {
   const dateFmt = dayjs(data.date).format('DD/MM/YYYY HH:mm');
 
   return (
-    <div className="max-w-xl mx-auto bg-white/10 p-6 rounded-2xl shadow space-y-4">
-      <h1 className="text-2xl font-semibold">
-        Cita #{data.id}
-      </h1>
+    <PageWrapper>
+      <div className="max-w-xl mx-auto bg-white/10 p-6 rounded-2xl shadow space-y-4">
+        <h1 className="text-2xl font-semibold">Cita #{data.id}</h1>
 
-      {data.clinicName && (
-        <p className="text-sm text-slate-500">Clínica: {data.clinicName}</p>
-      )}
+        {data.clinicName && (
+          <p className="text-sm text-slate-500">Clínica: {data.clinicName}</p>
+        )}
 
-      <table className="w-full text-sm">
-        <tbody>
-          <Row label="Fecha" value={dateFmt} />
-          <Row label="Peso (kg)" value={data.weight} />
-          <Row label="Temperatura (°C)" value={data.temperature} />
-          <Row label="Ritmo cardíaco" value={data.heartRate ?? '—'} />
-          <Row label="Síntomas" value={data.symptoms.join(', ') || '—'} />
-          <Row label="Descripción" value={data.description ?? '—'} />
-          <Row label="Diagnóstico" value={data.diagnosis ?? '—'} />
-          <Row label="Tratamientos" value={data.treatments ?? '—'} />
-          <Row label="Notas" value={data.notes ?? '—'} />
-        </tbody>
-      </table>
+        <table className="w-full text-sm">
+          <tbody>
+            <Row label="Fecha" value={dateFmt} />
+            <Row label="Peso (kg)" value={data.weight} />
+            <Row label="Temperatura (°C)" value={data.temperature} />
+            <Row label="Ritmo cardíaco" value={data.heartRate ?? '—'} />
+            <Row label="Síntomas" value={data.symptoms.join(', ') || '—'} />
+            <Row label="Descripción" value={data.description ?? '—'} />
+            <Row label="Diagnóstico" value={data.diagnosis ?? '—'} />
+            <Row label="Tratamientos" value={data.treatments ?? '—'} />
+            <Row label="Notas" value={data.notes ?? '—'} />
+          </tbody>
+        </table>
 
-      <Link to={-1 as any} className="btn btn-primary">Volver</Link>
-    </div>
+        <Link to={-1 as any} className="btn btn-primary">
+          Volver
+        </Link>
+      </div>
+    </PageWrapper>
   );
 }
 

@@ -6,19 +6,27 @@ import { predict } from '../../api/predictions';
 export default function PredictPage() {
   const [symptoms, setSymptoms] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
-  const [result, setResult]   = useState<{disease:string, precautions:string[]}>();
+  const [result, setResult] = useState<{
+    disease: string;
+    precautions: string[];
+  }>();
 
   useEffect(() => {
     getSymptoms().then(setSymptoms);
   }, []);
 
   const toggle = (s: string) =>
-    setSelected(sel => sel.includes(s) ? sel.filter(x => x!==s) : [...sel, s]);
+    setSelected((sel) =>
+      sel.includes(s) ? sel.filter((x) => x !== s) : [...sel, s],
+    );
 
   async function handlePredict() {
     if (selected.length === 0) return;
     const r = await predict({ symptoms: selected });
-    setResult({ disease: r.disease, precautions: Object.values(r.precautions) });
+    setResult({
+      disease: r.disease,
+      precautions: Object.values(r.precautions),
+    });
   }
 
   return (
@@ -27,7 +35,7 @@ export default function PredictPage() {
 
       {/* Lista de síntomas */}
       <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto bg-white/5 p-4 rounded-xl">
-        {symptoms.map(s => (
+        {symptoms.map((s) => (
           <label key={s} className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
@@ -41,7 +49,7 @@ export default function PredictPage() {
 
       <button
         onClick={handlePredict}
-        disabled={selected.length===0}
+        disabled={selected.length === 0}
         className="btn btn-primary w-full"
       >
         Predecir
@@ -55,7 +63,9 @@ export default function PredictPage() {
           </h2>
           <h3 className="text-lg mb-1">Precauciones sugeridas:</h3>
           <ul className="list-disc pl-6 space-y-1 text-sm">
-            {result.precautions.map(p => <li key={p}>{p}</li>)}
+            {result.precautions.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
           </ul>
         </div>
       )}

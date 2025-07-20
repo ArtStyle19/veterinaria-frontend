@@ -59,7 +59,7 @@
 
 //             </>
 //           )}
-          
+
 //         </div>
 
 //         {/* perfil / logout */}
@@ -89,13 +89,23 @@
 //   );
 // }
 
-
-
-import { Link, NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { useEffect } from 'react';
-import { LogOut, LogIn} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { LogOut, LogIn } from 'lucide-react';
 
+const fullHeightPages = ['/dashboard'];
+const isFullHeight = fullHeightPages.includes(location.pathname);
+
+///
+
+///
 /**
  * "MainLayout" — layout único que se comporta dinámicamente según
  *  - Visitante sin sesión → sólo muestra enlaces públicos
@@ -146,11 +156,9 @@ export default function MainLayout() {
       <NavLink to="/clinics/me" className="nav-link">
         Clínica
       </NavLink>
-        <NavLink to="/predict" className="hover:text-amber-300">
-    Predictor
-  </NavLink>
-
-
+      {/* <NavLink to="/predict" className="hover:text-amber-300">
+        Predictor
+      </NavLink> */}
     </>
   );
 
@@ -162,6 +170,9 @@ export default function MainLayout() {
       <NavLink to="/vets/new" className="nav-link">
         Nuevo vet
       </NavLink>
+      <NavLink to="admin/stats/global" className="nav-link">
+        Gestionar
+      </NavLink>
     </>
   );
 
@@ -169,9 +180,7 @@ export default function MainLayout() {
     // <div className="flex flex-col min-h-screen"></div>
     <div className="min-h-screen flex flex-col bg-gradient-to-bl from-blue-950 via-black to-violet-950 text-slate-100">
       {/* ---------- NAV ---------- */}
-      <nav
-        className="backdrop-blur-md bg-white/3 border-b border-white/10 shadow-md sticky top-0 z-50"
-      >
+      <nav className="backdrop-blur-md bg-white/3 border-b border-white/10 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
           {/* brand */}
           <Link to="/" className="font-bold text-lg tracking-wide">
@@ -200,22 +209,26 @@ export default function MainLayout() {
               className="flex items-center gap-1 bg-blue-700/30 border-white/50 border-1 hover:bg-blue-600/0 hover:border-white hover:border-1 transition px-3 py-1 text-xs rounded-full shadow-md"
             >
               <LogIn size={14} /> Iniciar Sesion
-
             </Link>
           )}
         </div>
       </nav>
-
-      {/* ---------- CONTENIDO ---------- */}
-      <main className="flex-1 flex justify-center px-4 py-8">
-        <div className="w-full max-w-7xl rounded-2xl backdrop-blur-md bg-white/3 border border-white/10 shadow-xl p-6">
+      <main className="flex-1 flex justify-center px-4 py-8 overflow-hidden">
+        <div
+          className={`w-full max-w-7xl p-6 ${
+            isFullHeight
+              ? 'h-full min-h-[calc(100vh-160px)]'
+              : 'overflow-y-auto min-h-[calc(100vh)] max-h-[calc(100vh-160px)] rounded-2xl backdrop-blur-md bg-white/3 border border-white/10 shadow-xl'
+          }`}
+        >
           <Outlet />
         </div>
       </main>
 
       {/* ---------- FOOTER ---------- */}
       <footer className="text-center text-xs py-6 text-slate-100 backdrop-blur-md bg-white/3 border-t border-white/10">
-        © {new Date().getFullYear()} Central‑Vet — Todos los derechos reservados
+        © {new Date().getFullYear()} Central‑Vet — Todos los derechos
+        reservados
       </footer>
     </div>
   );
@@ -228,3 +241,4 @@ export default function MainLayout() {
 //   },
 // }
 // Y en globals: .nav-link { @apply hover:text-amber-300 transition-colors; }
+/* --- componente interno que llama /clinics para listar  --- */

@@ -1,6 +1,6 @@
 export interface AppointmentSummaryDto {
   id: number;
-  date: string;                // ISO-8601 UTC
+  date: string; // ISO-8601 UTC
   weight: number;
   temperature: number;
   heartRate: number;
@@ -10,7 +10,7 @@ export interface AppointmentSummaryDto {
   notes?: string;
   createdById: number;
   symptoms: string[];
-    /* NUEVO */
+  /* NUEVO */
   clinicId?: number;
   clinicName?: string;
 }
@@ -32,16 +32,15 @@ export interface AppointmentDetailDto {
   clinicName?: string;
 }
 
-
 export interface HistoricalRecordDto {
   recordId: number;
-    clinics: { id?: number; name: string; address?: string }[];  // adaptado
-//   clinic?: { name: string; address?: string };
+  clinics: { id?: number; name: string; address?: string }[]; // adaptado
+  //   clinic?: { name: string; address?: string };
   appointments: AppointmentSummaryDto[];
 }
 
 export interface CreateAppointmentRequest {
-  date?: string;                      // opcional, ahora mismo puede ser null
+  date?: string; // opcional, ahora mismo puede ser null
   weight: number;
   temperature: number;
   heartRate?: number;

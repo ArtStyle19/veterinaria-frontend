@@ -1,16 +1,15 @@
 import { QRCodeSVG } from 'qrcode.react';
 
-interface Props {
-  token: string;
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
+  token?: string;
   size?: number;
 }
 
-export default function PetQRCode({ token, size = 160 }: Props) {
+export default function PetQRCode({ token, size = 160, ...props }: Props) {
   const url = `${import.meta.env.VITE_PUBLIC_BASE_URL}/qr/${token}`;
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2" {...props}>
       <QRCodeSVG value={url} size={size} level="M" />
-      <p className="text-xs text-slate-500 break-all text-center">{url}</p>
     </div>
   );
 }

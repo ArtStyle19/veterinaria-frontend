@@ -1,6 +1,6 @@
 export interface JwtResponse {
   token: string;
-  expiresAt: string;            // ISO-8601
+  expiresAt: string; // ISO-8601
 }
 
 export interface UserDto {

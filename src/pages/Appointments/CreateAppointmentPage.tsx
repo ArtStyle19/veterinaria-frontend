@@ -4,20 +4,30 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createAppointment, getSymptoms } from '../../api/medical';
-import { predict } from '../../api/predictions';   // 👈
+import { predict } from '../../api/predictions'; // 👈
 import type { CreateAppointmentRequest } from '../../types/medical';
 import toast from 'react-hot-toast';
+import PageWrapper from '../../components/PageWrapper';
 
-const schema: yup.Schema<CreateAppointmentRequest> = yup.object({
+// THIS IS THE KEY PART
+const schema: yup.ObjectSchema<CreateAppointmentRequest> = yup.object({
   date: yup.string().optional(),
-  weight: yup.number().positive().required('Requerido'),
-  temperature: yup.number().required('Requerido'),
-  heartRate: yup.number().optional(),
+  weight: yup
+    .number()
+    .typeError('Debe ser un número')
+    .positive('Debe ser un número positivo')
+    .required('Requerido'),
+  temperature: yup
+    .number()
+    .typeError('Debe ser un número')
+    .required('Requerido'),
+  heartRate: yup.number().typeError('Debe ser un número').optional(),
   description: yup.string().optional(),
   treatments: yup.string().optional(),
   diagnosis: yup.string().optional(),
   notes: yup.string().optional(),
-  symptoms: yup.array(yup.string()).optional()
+  // symptoms: yup.array().of(yup.string()).optional(),
+  symptoms: yup.array(yup.string().required()).optional(),
 });
 
 type Option = { value: string; label: string };
@@ -32,29 +42,34 @@ export default function CreateAppointmentPage() {
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isSubmitting }
-  } = useForm<CreateAppointmentRequest>({ resolver: yupResolver(schema) });
+    formState: { errors, isSubmitting },
+  } = useForm<CreateAppointmentRequest>({
+    resolver: yupResolver(schema),
+  });
 
   /* síntomas disponibles / seleccionados */
   const [options, setOptions] = useState<Option[]>([]);
   const [symInput, setSymInput] = useState('');
 
   /* predicción */
-  const [prediction, setPrediction] = useState<{ disease: string; precautions: string[] }>();
+  const [prediction, setPrediction] = useState<{
+    disease: string;
+    precautions: string[];
+  }>();
 
   /* cargar lista de síntomas al montar */
   useEffect(() => {
-    getSymptoms().then(syms =>
-      setOptions(syms.map(s => ({ value: s, label: s })))
+    getSymptoms().then((syms) =>
+      setOptions(syms.map((s) => ({ value: s, label: s }))),
     );
   }, []);
 
   /* quick-add */
   function addSymptom() {
     if (!symInput.trim()) return;
-    const already = options.map(o => o.value);
+    const already = options.map((o) => o.value);
     if (!already.includes(symInput))
-      setOptions(prev => [...prev, { value: symInput, label: symInput }]);
+      setOptions((prev) => [...prev, { value: symInput, label: symInput }]);
 
     /** añadirlo como tildado */
     const current = watch('symptoms') ?? [];
@@ -71,7 +86,10 @@ export default function CreateAppointmentPage() {
     }
     try {
       const res = await predict({ symptoms: syms });
-      setPrediction({ disease: res.disease, precautions: Object.values(res.precautions) });
+      setPrediction({
+        disease: res.disease,
+        precautions: Object.values(res.precautions),
+      });
       // Rellenar diagnóstico automáticamente si vacío
       const currentDiag = watch('diagnosis');
       if (!currentDiag) setValue('diagnosis', res.disease);
@@ -90,79 +108,115 @@ export default function CreateAppointmentPage() {
 
   /* ========== UI ============================================ */
   return (
-    <div className="max-w-xl mx-auto bg-white/5 p-6 rounded-2xl shadow-xl backdrop-blur">
-      <h1 className="text-xl font-semibold mb-5 text-white">Nueva cita</h1>
+    <PageWrapper>
+      <div className="max-w-xl mx-auto bg-white/5 p-6 rounded-2xl shadow-xl backdrop-blur">
+        <h1 className="text-xl font-semibold mb-5 text-white">Nueva cita</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-        {/* datos físicos */}
-        <Input label="Peso (kg)" type="number" step="0.01"
-               {...register('weight')} error={errors.weight?.message} />
-        <Input label="Temperatura (°C)" type="number" step="0.1"
-               {...register('temperature')} error={errors.temperature?.message} />
-        <Input label="Ritmo cardíaco (lpm)" type="number"
-               {...register('heartRate')} error={errors.heartRate?.message} />
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+          {/* datos físicos */}
+          <Input
+            label="Peso (kg)"
+            type="number"
+            step="0.01"
+            {...register('weight')}
+            error={errors.weight?.message}
+          />
+          <Input
+            label="Temperatura (°C)"
+            type="number"
+            step="0.1"
+            {...register('temperature')}
+            error={errors.temperature?.message}
+          />
+          <Input
+            label="Ritmo cardíaco (lpm)"
+            type="number"
+            {...register('heartRate')}
+            error={errors.heartRate?.message}
+          />
 
-        {/* síntomas */}
-        <div>
-          <label className="block text-sm mb-1 text-white">Síntomas</label>
+          {/* síntomas */}
+          <div>
+            <label className="block text-sm mb-1 text-white">Síntomas</label>
 
-          <div className="flex gap-2 mb-2">
-            <input
-              value={symInput}
-              onChange={e => setSymInput(e.target.value)}
-              className="input flex-1"
-              placeholder="Escribe y pulsa +"
-            />
-            <button type="button" onClick={addSymptom} className="btn btn-primary">+</button>
+            <div className="flex gap-2 mb-2">
+              <input
+                value={symInput}
+                onChange={(e) => setSymInput(e.target.value)}
+                className="input flex-1"
+                placeholder="Escribe y pulsa +"
+              />
+              <button
+                type="button"
+                onClick={addSymptom}
+                className="btn btn-primary"
+              >
+                +
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-1 max-h-40 overflow-y-auto border p-2 rounded bg-white/5">
+              {options.map((opt) => (
+                <label
+                  key={opt.value}
+                  className="flex gap-1 items-center text-xs text-white"
+                >
+                  <input
+                    type="checkbox"
+                    value={opt.value}
+                    {...register('symptoms')}
+                  />
+                  {opt.label}
+                </label>
+              ))}
+            </div>
+
+            {/* botón de predicción */}
+            <button
+              type="button"
+              onClick={handlePredict}
+              className="btn btn-secondary w-full mt-3"
+            >
+              Predecir enfermedad
+            </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-1 max-h-40 overflow-y-auto border p-2 rounded bg-white/5">
-            {options.map(opt => (
-              <label key={opt.value} className="flex gap-1 items-center text-xs text-white">
-                <input type="checkbox" value={opt.value} {...register('symptoms')} />
-                {opt.label}
-              </label>
-            ))}
-          </div>
+          {/* tarjeta de resultado */}
+          {prediction && (
+            <div className="mt-4 p-4 rounded-xl border border-emerald-400/20 bg-emerald-900/30 backdrop-blur">
+              <h3 className="text-lg font-semibold text-emerald-200 mb-2">
+                Enfermedad probable: {prediction.disease}
+              </h3>
+              <h4 className="text-sm mb-1 text-white/80">
+                Precauciones sugeridas:
+              </h4>
+              <ul className="list-disc pl-5 text-sm space-y-1">
+                {prediction.precautions.map((p) => (
+                  <li key={p}>{p}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-          {/* botón de predicción */}
-          <button type="button"
-                  onClick={handlePredict}
-                  className="btn btn-secondary w-full mt-3">
-            Predecir enfermedad
+          {/* descripción y demás */}
+          <Textarea label="Descripción" {...register('description')} />
+          <Textarea label="Diagnóstico" {...register('diagnosis')} />
+          <Textarea label="Tratamientos" {...register('treatments')} />
+          <Textarea label="Notas" {...register('notes')} />
+
+          <button disabled={isSubmitting} className="btn btn-primary mt-2">
+            {isSubmitting ? 'Guardando…' : 'Crear cita'}
           </button>
-        </div>
-
-        {/* tarjeta de resultado */}
-        {prediction && (
-          <div className="mt-4 p-4 rounded-xl border border-emerald-400/20 bg-emerald-900/30 backdrop-blur">
-            <h3 className="text-lg font-semibold text-emerald-200 mb-2">
-              Enfermedad probable: {prediction.disease}
-            </h3>
-            <h4 className="text-sm mb-1 text-white/80">Precauciones sugeridas:</h4>
-            <ul className="list-disc pl-5 text-sm space-y-1">
-              {prediction.precautions.map(p => <li key={p}>{p}</li>)}
-            </ul>
-          </div>
-        )}
-
-        {/* descripción y demás */}
-        <Textarea label="Descripción" {...register('description')} />
-        <Textarea label="Diagnóstico" {...register('diagnosis')} />
-        <Textarea label="Tratamientos" {...register('treatments')} />
-        <Textarea label="Notas" {...register('notes')} />
-
-        <button disabled={isSubmitting} className="btn btn-primary mt-2">
-          {isSubmitting ? 'Guardando…' : 'Crear cita'}
-        </button>
-      </form>
-    </div>
+        </form>
+      </div>
+    </PageWrapper>
   );
 }
 
 /* === helpers =================================================== */
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  label: string; error?: string;
+  label: string;
+  error?: any;
 };
 function Input({ label, error, ...rest }: InputProps) {
   return (
@@ -174,7 +228,7 @@ function Input({ label, error, ...rest }: InputProps) {
   );
 }
 function Textarea(
-  props: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }
+  props: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string },
 ) {
   return (
     <div>
